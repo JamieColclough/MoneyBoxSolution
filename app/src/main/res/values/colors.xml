@@ -5,5 +5,8 @@
     <color name="colorAccent">#49bfbd</color>
     <color name="white">#ffffff</color>
     <color name="light_grey">#dde0e2</color>
+    <color name="product_color">#70ffee</color>
+    <color name="product_border_color">#42d1f4</color>
+
 
 </resources>
