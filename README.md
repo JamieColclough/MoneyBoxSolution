@@ -1,18 +1,15 @@
-# The Brief:
-
-Create a mini version of the Moneybox app that will allow existing users to login, check their account and add money to their moneybox.
-
 ## Part A - Fix current bugs
-
-In this repository you will find LoginActivity that allows users to enter their username, password and optionally their name.  We have implemented a basic screen for you that validates username, password and name against simple regular expressions but makes no calls to the API.
-
-Unfortunately this screen has 3 bugs raised by our testers that they want you to fix and are listed below.  If you are struggling to fix any of these bugs, please give it your best attempt and then move onto the next bug or task.
 
 ### Bug 1 - Layout does not look as expected
 
-Please re-arrange the views in the LoginActivity to match the expected layout.
+Edited layout **_constraintTop_toBottomOf** property of **password** field and **first_name** field so they are below the previous text boxes, ensuring the consistency.
 
-![](/images/correct_layout.png)
+Center logo with 
+**app:layout_constraintLeft_toLeftOf="parent"**
+**app:layout_constraintRight_toRightOf="parent"**
+
+Fix signIn logo and image by putting in a linear layout so they are closely together, and moved up with **marginTop**.
+
 
 ### Bug 2 - Validation is incorrect
 If the input entered by the user is correct then they should see a toast saying “Input is valid!”.  However if it is not correct we should show an error on the field that is incorrect.  Below is the following validation logic:
