@@ -12,127 +12,21 @@ Fix signIn logo and image by putting in a linear layout so they are closely toge
 
 
 ### Bug 2 - Validation is incorrect
-If the input entered by the user is correct then they should see a toast saying “Input is valid!”.  However if it is not correct we should show an error on the field that is incorrect.  Below is the following validation logic:
+Changed starting value of **isValid** to true, and then evaluated each condition of the loop. If one of the conditions was found to be invalid, **isValid** would be set to false. This fixed the problem of **isValid** being true if one of the boxes was valid, when we need 2 of the boxes at the very least to be true.
+Changed if condition for **first_name** field. This only gives a validation error if anything has been entered in the field, and it was an invalid string.
+Also, the error messages are reset each time the **allFieldsValid** function is called. This ensures that if a previously incorrect field of the text boxes has now been entered correctly, the error message will disappear.
 
-- Email is not optional and should match EMAIL_REGEX
-- Password is not optional and should match PASSWORD_REGEX
-- Name is optional, but if it contains any value it should match NAME_REGEX
-
-There is some validation logic in LoginActivity, but it is currently incorrect. Please implement this feature to match this logic.
 
 ### Bug 3 - Animation is looping incorrectly
 
-Above the login button is an animation of an owl and a pig.  We would like this animation to play every time the user starts the activity and then loop indefinitely.  The logic for this animation should be as follows:
-
-- The animation should start from frame **0** to **109** when the user first starts the activity.  See below for animation.
-![](/images/firstpig.gif)
-- When the first stage of the animation has finished it should then loop from frame **131** to **158** continuously.  See below for animation.<br/>
-![](/images/secondpig.gif)
-
-To create animation in our app we use a helpful library called Lottie.  This has been added to the project for you, but currently it just plays the animation once and then stops.  Please implement the logic as described above.
-
-There is lots of helpful documentation on Lottie [here](http://airbnb.io/lottie/android/android.html#sample-app).  Please take a look at this page for information on how to loop the animation, play from a min and max frame and detect when an animation ends.
+Firstly, I changed the setupAnimation method so it only played the frames **0** to **109**. Next, I added an **animatorListener** to the animation that has an overrided **onAnimationEnd** method. This means, when the animation from **0** to **109** ends, this event is triggered which calls the loop animation method. This method sets the animation frames from **131** to **158**, and also changes the properties so this part of the animation loops indefinitely.
 
 ## Part B - Add 2 new screens
 
-We now want to give some useful functionality to our users. To allow them to log into the app, view and edit their account using our sandbox API.
+The remainder of my solution is implemented in java as this is my preferred language.
+Firstly, once the **allFieldsValid** function passes, An instance of **LoginAPI** is called. This is an **AsyncTask** class that submits the email and password to the moneyBox API. If the details are incorrect, a toast will pop up asking the user to try again. If it was successful, then the API stores the bearer token (and name if entered) into the application's shared preferences before starting an intent for **AccountsActivity**.
 
-### Screen 2 - User accounts screen
-This screen should be shown after the user has successfully logged in and should show have the following functionality:
-- Display "Hello {name} **only** if they provided it on previous screen"
-- Show the **'TotalPlanValue'** of a user.
-- Show the accounts the user holds, e.g. ISA, GIA, LISA, Pension.
-- Show all of those account's **'PlanValue'**.
-- Shhow all of those account's **'Moneybox'** total.
+This activity starts by using the **InvestorProductsAPI** async task with the bearer token to obtain a list of all of the user's products before displaying it in the boxes. The user's name is also displayed if it was entered. Onclick listeners are attatched to each of the boxes, so clicking on one of the boxes creates an intent for **IndividualAccountActivity**. If this API fails to get the information (e.g. if there is no internet connection or the user's bearer token has expired) then the activity will call **finish()** and navigate back to the login screen.
 
-### Screen 3 - Individual account screen
-If a user selects one of those accounts, they should then be taken to this screen.  This screen should have the following functionality:
-- Show the **'Name'** of the account.
-- Show the account's **'PlanValue'**.
-- Show the accounts **'Moneybox'** total.
-- Allow a user to add to a fixed value (e.g. £10) to their moneybox total.
+The **IndividualAccountActivity** activity is passed the previous data through **Intent.putExtra()**, and displays all of this additional information. The activity also has a button which when clicked, uses the **PaymentAPI** async task. This calls the final http method to add £10 to the user's particular moneybox total. If successful, then the user's price will update  on the screen as well as in the database. A toast will also pop up to say the payment was successful. If the payment fails, a toast will also pop up saying this.
 
-A prototype wireframe of all 3 screens is provided as a guideline. You are free to change any elements of the screen and provide additional information if you wish.
-
-![](/images/wireframe.png)
-
-## What we are looking for:
- - An android application written in either Java or Kotlin.
- - Demonstration of coding style and design patterns.
- - Knowledge of common android libraries and any others that you find useful.
- - Storage of data between screens.
- - Consistency of data between screens.
- - Error handling.
- - Any form of unit or integration testing you see fit.
- - The application must run on Android 5.0 and above.
- - The application must compile and run in Android Studio.
-
-Please feel free to refactor the LoginActivity and use any libraries/helper methods to make your life easier.
-
-## How to Submit your solution:
- - Clone this repository
- - Create a public repo in github, bitbucket or a suitable alternative and provide a link to the repository.
- - Provide a readme in markdown which details how you solved the bugs in part A, and explains the structure of your solution in Part B and any libraries that you may have used.
-
-## API Usage
-This a brief summary of the api endpoints in the moneybox sandbox environment. There a lot of other additional properties from the json responses that are not relevant, but you must use these endpoints to retrieve the information needed for this application.
-
-#### Base URL & Test User
-The base URL for the moneybox sandbox environment is `https://api-test01.moneyboxapp.com/`.
-You can log into test your app using the following user:
-
-|  Username          | Password         |
-| ------------- | ------------- |
-| androidtest@moneyboxapp.com  | P455word12  |
-
-#### Headers
-
-In order to make requests https must be used and the following headers must be included in each request.
-
-|  Key | Value |
-| ------------- | ------------- |
-| AppId  | 3a97b932a9d449c981b595  |
-| Content-Type  | application/json  |
-| appVersion | 5.10.0 |
-| apiVersion | 3.0.0 |
-
-#### Authentication
-To login with this user to retrieve a bearer token you need to call `POST /users/login`.
-```
-POST /users/login
-{
-  "Email": "androidtest@moneyboxapp.com",
-  "Password": "P455word12",
-  "Idfa": "ANYTHING"
-}
-```
-Sample json response
-```
-"Session": {
-        "BearerToken": "TsMWRkbrcu3NGrpf84gi2+pg0iOMVymyKklmkY0oI84=",
-        "ExternalSessionId": "4ff0eab7-7d3f-40c5-b87b-68d4a4961983", -- not used
-        "SessionExternalId": "4ff0eab7-7d3f-40c5-b87b-68d4a4961983", -- not used
-        "ExpiryInSeconds": 0 -- not used
-    }
-```
-After obtaining a bearer token an Authorization header must be provided for all other endpoints along with the headers listed above (Note: The BearerToken has a sliding expiration of 5 mins).
-
-|  Key          | Value         |
-| ------------- | ------------- |
-| Authorization  | Bearer TsMWRkbrcu3NGrpf84gi2+pg0iOMVymyKklmkY0oI84=  |
-
-#### Investor Products
-Provides product and account information for a user that will be needed for the two additional screens.
-```
-GET /investorproducts
-```
-### One off payments
-Adds a one off amount to the users moneybox.
-```
-POST /oneoffpayments
-{
-  "Amount": 20,
-  "InvestorProductId": 3230 ------> The InvestorProductId from /investorproducts endpoint
-}
-```
-Good luck!
