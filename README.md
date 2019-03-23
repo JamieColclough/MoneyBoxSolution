@@ -8,18 +8,19 @@ Center logo with
 **app:layout_constraintLeft_toLeftOf="parent"**
 **app:layout_constraintRight_toRightOf="parent"**
 
-Fix signIn logo and image by putting in a linear layout so they are closely together, and moved up with **marginTop**.
+Fix sign-in logo and image by putting in a linear layout so they are closely together, and moved up with **marginTop**.
 
 
 ### Bug 2 - Validation is incorrect
-Changed starting value of **isValid** to true, and then evaluated each condition of the loop. If one of the conditions was found to be invalid, **isValid** would be set to false. This fixed the problem of **isValid** being true if one of the boxes was valid, when we need 2 of the boxes at the very least to be true.
+Changed starting value of **isValid** to true, and then evaluated each condition of the loop. If one of the conditions was found to be invalid, **isValid** would be set to false. 
+This fixed the problem of **isValid** being true if one of the boxes was valid, when we need 2 of the boxes at the very least to be true.
 Changed if condition for **first_name** field. This only gives a validation error if anything has been entered in the field, and it was an invalid string.
 Also, the error messages are reset each time the **allFieldsValid** function is called. This ensures that if a previously incorrect field of the text boxes has now been entered correctly, the error message will disappear.
 
 
 ### Bug 3 - Animation is looping incorrectly
 
-Firstly, I changed the setupAnimation method so it only played the frames **0** to **109**. Next, I added an **animatorListener** to the animation that has an overrided **onAnimationEnd** method. This means, when the animation from **0** to **109** ends, this event is triggered which calls the loop animation method. This method sets the animation frames from **131** to **158**, and also changes the properties so this part of the animation loops indefinitely.
+Firstly, I changed the **setupAnimation** method so it only played the frames **0** to **109**. Next, I added an **animatorListener** to the animation that has an overrided **onAnimationEnd** method. This means, when the animation from **0** to **109** ends, this event is triggered which calls the loop animation method. This method sets the animation frames from **131** to **158**, and also changes the properties so this part of the animation loops indefinitely.
 
 ## Part B - Add 2 new screens
 
